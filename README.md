@@ -18,7 +18,7 @@ problem was true or false. Each problem constituted one trial, which consisted o
 
 ### Data cleaning
 
-The data are cleaned using the SENSI short epoch preprocessing pipeline. The details for using this pipeline can be found [LINK]. In the folder `/bash/preproc/configs`, there are a series of `.m` files that configure the preprocessing pipeline for each participant. 
+The data are cleaned using the SENSI short epoch preprocessing pipeline<sup>1</sup>. In the folder `/bash/preproc/configs`, there are a series of `.m` files that configure the preprocessing pipeline for each participant. 
 The paths to these files are listed in the file `/bash/preproc/configs.txt`, which you will have to update to reflect your directory structure. Once you have updated these paths, you are ready to run the preprocessing pipeline. 
 
 To run locally, you will have to edit the `/matlab/preproc/runCleaning.m` file to specify the Matlab paths on your computer and then the function for each participant. 
@@ -59,3 +59,7 @@ To run classification analyses in Python, example scripts can be found in `/pyth
 
 The script `/python/classification/mne_classification.py` gives examples of running time resolved classifications with `MNE-Python`. This script calls on fuctions in `/python/classification/utils/mne_utils.py` that enable the user to run time-resolved classificaiton across a range categories found in the data. 
 
+
+## References
+
+1. Amilcar J. Malave, Amandine Van Rinsveld, Blair Kaneshiro (in preparation). Stanford Educational Neuroscience Initiative EEG Preprocessing Pipeline - Short Epoch (SENSI-EEG-Preproc-SE). GitHub Release.
