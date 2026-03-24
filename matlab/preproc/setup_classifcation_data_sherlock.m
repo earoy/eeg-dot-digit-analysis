@@ -14,10 +14,10 @@
 %	>     > eni_list.txt
 %
 %	
-addpath('/home/users/ethanroy/eeg_groupitizing/code/matlab/preproc/');
+addpath('/home/users/sagon151/eeg-dot-digit-analysis/matlab/preproc/');
 % subjectIDs = readcell('/home/users/ethanroy/eeg_groupitizing/code/bash/preproc/eni_list.txt', 'Delimiter','\n');
 % Read and decode JSON file
-jsonText = fileread('/home/users/ethanroy/eeg_groupitizing/code/bash/preproc/eni_list_test.json');
+jsonText = fileread('/home/users/sagon151/eeg-dot-digit-analysis/bash/preproc/eni_list_test.json');
 data = jsondecode(jsonText);
 
 % Extract subject IDs and block numbers
@@ -33,7 +33,7 @@ for s = 1:numel(subjectIDs)
     blocks = blockNums{s};
 
     % load cleaned EEG data
-    eeg_data_path = sprintf("/scratch/users/ethanroy/eeg_groupitizing_data/cleaned/%s_cleaned.mat",subjectID);
+    eeg_data_path = sprintf("/home/users/sagon151/eeg-dot-digit-analysis/output/%s_cleaned.mat",subjectID);
     loaded_data = load(eeg_data_path);
     classData.X = loaded_data.xClean;
     classData.good_epochs = loaded_data.INFO.good_epochs;
@@ -45,7 +45,7 @@ for s = 1:numel(subjectIDs)
         trial_info_dir = sprintf("/scratch/users/ethanroy/eeg_groupitizing_data/raw_data/%s/ExpMatData/", subjectID);
     end 
     
-    outdir = "/scratch/users/ethanroy/eeg_groupitizing_data/classification_input/";
+    outdir = "/home/users/sagon151/eeg-dot-digit-analysis/output/classification_input/";
     
 
     % Get a list of all files in the directory
