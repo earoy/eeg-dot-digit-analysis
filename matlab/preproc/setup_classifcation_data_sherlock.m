@@ -17,7 +17,7 @@
 addpath('/home/users/sagon151/eeg-dot-digit-analysis/matlab/preproc/');
 % subjectIDs = readcell('/home/users/ethanroy/eeg_groupitizing/code/bash/preproc/eni_list.txt', 'Delimiter','\n');
 % Read and decode JSON file
-jsonText = fileread('/home/users/sagon151/eeg-dot-digit-analysis/bash/preproc/eni_list_test.json');
+jsonText = fileread('/home/users/sagon151/eeg-dot-digit-analysis/bash/preproc/eni_list.json');
 data = jsondecode(jsonText);
 
 % Extract subject IDs and block numbers
