@@ -33,7 +33,7 @@ for s = 1:numel(subjectIDs)
     blocks = blockNums{s};
 
     % load cleaned EEG data
-    eeg_data_path = sprintf("/home/users/sagon151/eeg-dot-digit-analysis/output/%s_cleaned.mat",subjectID);
+    eeg_data_path = sprintf("/home/users/sagon151/eeg-dot-digit-analysis/output/cleaned_data/%s_cleaned.mat",subjectID);
     loaded_data = load(eeg_data_path);
     classData.X = loaded_data.xClean;
     classData.good_epochs = loaded_data.INFO.good_epochs;
