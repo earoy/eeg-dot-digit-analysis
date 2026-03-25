@@ -1,3 +1,4 @@
+
 % se_cleaning.m
 % -------------------------------------------------------------------------
 % By Amilcar Malave (2025-01-16)
@@ -29,7 +30,7 @@
 %%%%%%% Future Improvementes (some day) %%%%%%%%
 % Fully Integrate single float precision for all steps (except filtering)
 % Add optional extra conditions to filesearch
-% Add optional name search instead of auto file search
+% Add optional name serach instead of auto file search
 % add a word to not be included in the filename search
 % Move more of the search into a function
 % Optional TCPIP csv variable
@@ -40,24 +41,27 @@
     %   following in a .txt file: Session information, input .mat filenames,
     %   filtering specifications, triggers and onsets.
 
-clear; close all; clc;
+
 
 fprintf('~ * ~ * Initiating Short Epoch Cleaning * ~ * ~\n\n')
+tmpThisFile = "se_cleaning.m";
 
+clear; close all; clc;
 
 %% Specifications - Only need to specify items in this section once. 
 
 % Specify config filename (user must ensure that config file is on the path)
 % After creating your costume config file, replace the line below with yours
-%   E.g. se_cleaning_config_AM.m or se_cleaning_config_SSVEPstudy.m
-%configFn = "se_cleaning_config.m"; %OG code
-configFn = getenv('config_path'); % Used for Bash Shell Scripting on Sherlock
-addpath('/home/groups/brucemc/Analysis/SENSI-EEG-SE-private-main'); % Adds Path to Access code on Sherlock
+
+% Grabs config file from environment
+configFn = getenv('config_path');
+% configFn = '/home/users/ethanroy/eeg_groupitizing/code/bash/preproc/configs/se_cleaning_config_ENI_208.m';
+addpath('/home/groups/brucemc/Analysis');
 
 % Specify analyzer's initials
 INFO.se_cleaning_analyzer = ''; % Specify analyzer's initials (move into config)
 
-%% Main Preprocessing (Dont Touch)
+%% Main Preprocessing (Dont Touch)ls ~
 
 % Load Config File
 try  % Try config preliminary checks
@@ -92,8 +96,8 @@ clear tmp*
 %% Searching Files to be Processed 
 
 % Desired Files
-INFO.file_labels.Matched_files = searchDesiredFiles(INFO.dirs.raw, INFO.file_labels)'; 
-% Number of files to be processed 
+INFO.file_labels.Matched_files = search_desired_files(INFO.dirs.raw, INFO.file_labels)'; 
+% Number of files to be processed
 nFilesMatRaw = length(INFO.file_labels.Matched_files); 
 fprintf('\nSelected %d Files:\n', nFilesMatRaw); % Display number of files
 disp(INFO.file_labels.Matched_files)
@@ -105,7 +109,7 @@ end
 
 % Output File Tag
 if isscalar(INFO.file_labels.Subjects) % If only Onse subject -> outputs will contain subject number
-    config.subStrOut = INFO.file_labels.Prefix + INFO.file_labels.Subjects{1} + "_" + INFO.file_labels.out_file;
+    config.subStrOut = INFO.file_labels.Prefix + "_" + INFO.file_labels.Subjects{1};
 else % If multiple subject -> Output name do not contain subject numbers
     config.subStrOut = INFO.file_labels.Prefix + "_" + INFO.file_labels.out_file;
 end
@@ -228,7 +232,7 @@ switch INFO.study_style
     case "SSVEP"
     % For now, it can only do 1 file at a time
     if nFilesMatRaw > 1
-        error(['epochSSVEP can only take 1 file for now (cell array ' ...
+        error(['Epoch_ssvep can only take 1 file for now (cell array ' ...
             'length must = 1)', newline, 'Ensure xFiltered = 1x1 cell']);
     end
    
@@ -238,7 +242,7 @@ switch INFO.study_style
     % Epoching SSVEP Data
     xEpoched_ssvep = cell(1,nFilesMatRaw); % Initialize xEpoched_ssvep
     for i = 1:nFilesMatRaw
-        xEpoched_ssvep{i} = epochSSVEP(xFiltered{i}, ...
+        xEpoched_ssvep{i} = epoch_ssvep(xFiltered{i}, ...
             onsets_truncated{i},INFO);
     end
     xEpoched_ssvep = cat(3, xEpoched_ssvep{:}); % Concatenate Files
@@ -519,9 +523,19 @@ if config.exclude_bad_epochs % if = 1, then Exclude Bad Epochs
     fprintf('\nExcluding Bad Epochs\n');
     [xIncluded, vars.flags] = excludeBadEpochs2(thisX_nan3D, ...
         thisIndicatorMatrix3D , INFO.Thresh, 0);
+    INFO.good_epochs = vars.flags.keep;
 else % Skip "Exclude Bad Epochs"
     xIncluded = thisX_nan3D;
     vars.flags.keep = 1:size(xIncluded,3);
+    INFO.good_epochs = vars.flags.keep;
+end
+
+% Labeling Bad Epochs
+if config.label_bad_epochs % if = 1, then Exclude Bad Epochs
+    fprintf('\nLabeling Bad Epochs\n');
+    [ignore_this, vars.flags] = excludeBadEpochs2(thisX_nan3D, ...
+        thisIndicatorMatrix3D , INFO.Thresh, 0);
+    INFO.good_epochs = vars.flags.keep;
 end
 
 %%% Plot NaNs in data
@@ -648,10 +662,12 @@ INFO.subStrOut = config.subStrOut; % Saving output str in INFO
 % OUTPUT IN A .MAT FILE.
 if config.saveOutput
     % cd(INFO.dirs.cleaned)
-    fnOut = INFO.dirs.cleaned + filesep + config.subStrOut + "_cleaned.mat";
+    fnOut = INFO.dirs.cleaned + "/" + config.subStrOut + "_cleaned.mat";
     fprintf('\nSaving Output\n%s\n',fnOut);
     save(fnOut,'INFO','fs_RS','epoch_1', 'xClean')
     fprintf('\n\tSize of output data: %s\n', mat2str(size(xClean)));
 end
 
-fprintf('\nDONE\n'); beep;
+fprintf('\nDONE\n');
+
+
