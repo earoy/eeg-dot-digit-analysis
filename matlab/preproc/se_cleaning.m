@@ -520,9 +520,19 @@ if config.exclude_bad_epochs % if = 1, then Exclude Bad Epochs
     fprintf('\nExcluding Bad Epochs\n');
     [xIncluded, vars.flags] = excludeBadEpochs2(thisX_nan3D, ...
         thisIndicatorMatrix3D , INFO.Thresh, 0);
+    INFO.good_epochs = vars.flags.keep;
 else % Skip "Exclude Bad Epochs"
     xIncluded = thisX_nan3D;
     vars.flags.keep = 1:size(xIncluded,3);
+    INFO.good_epochs = vars.flags.keep;
+end
+
+% Labeling Bad Epochs
+if config.label_bad_epochs % if = 1, then Exclude Bad Epochs
+    fprintf('\nLabeling Bad Epochs\n');
+    [ignore_this, vars.flags] = excludeBadEpochs2(thisX_nan3D, ...
+        thisIndicatorMatrix3D , INFO.Thresh, 0);
+    INFO.good_epochs = vars.flags.keep;
 end
 
 %%% Plot NaNs in data
